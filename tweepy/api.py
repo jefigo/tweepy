@@ -538,6 +538,22 @@ class API(object):
         )
 
     @property
+    def friends_following_ids(self):
+        allowed_params = [
+            'id', 'user_id', 'screen_name', 'cursor', 'count',
+            'include_profile_interstitial_type', 'include_blocking',
+            'include_blocked_by', 'include_followed_by',
+            'include_want_retweets', 'include_mute_edge', 'include_can_dm',
+            'include_can_media_tag', 'skip_status', 'with_total_count']
+
+        return bind_api(
+            api=self,
+            path='/friends/following/ids.json',
+            payload_type='ids',
+            allowed_param=allowed_params
+        )
+
+    @property
     def followers_ids(self):
         """ :reference: https://developer.twitter.com/en/docs/accounts-and-users/follow-search-get-users/api-reference/get-followers-ids
             :allowed_param:'id', 'user_id', 'screen_name', 'cursor', 'count'
