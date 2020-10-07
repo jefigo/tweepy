@@ -3,6 +3,7 @@
 # See LICENSE for details.
 
 import six
+import time
 
 
 class TweepError(Exception):
@@ -30,4 +31,23 @@ class RateLimitError(TweepError):
     """Exception for Tweepy hitting the rate limit."""
     # RateLimitError has the exact same properties and inner workings
     # as TweepError for backwards compatibility reasons.
-    pass
+
+    def resets_in(self):
+        '''Returns the remaining time in seconds for the rate limit to be replenished.
+
+        Uses the 'x-rate-limit-reset' header to calculate the countdown in seconds,
+        for the rate limit to be replenished. When the 'x-rate-limit-reset' header
+        is not present it returns the default reset time, which is 15 minutes.
+
+        :return:
+            int: reset time in seconds.
+        '''
+
+        rate_limit_reset_time = self.response.headers.get('x-rate-limit-reset')
+        default_reset_time_in_seconds = 15 * 60
+
+        if not rate_limit_reset_time:
+            return default_reset_time_in_seconds
+
+        rate_limit_reset_time_in_seconds = int(rate_limit_reset_time) - int(time.time())
+        return rate_limit_reset_time_in_seconds
